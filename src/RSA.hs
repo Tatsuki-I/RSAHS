@@ -26,8 +26,9 @@ rsaEnDec txt key n = map (\x -> x ^ key `mod` n) txt
 lbsToIntegerList :: LBS.ByteString -> [Integer]
 lbsToIntegerList txt = map toInteger $ LBS.unpack txt
 
---integerListToLBS :: [Integer] -> LBS.ByteString
---integerListToLBS list = LBS.pack list
+integerListToLBS :: [Integer] -> LBS.ByteString
+integerListToLBS = LBS.pack . map fromIntegral
+--integerListToLBS list = LBS.pack . map fromIntegral $ list
 
 rsaEncode :: LBS.ByteString -> Integer -> Integer -> [Integer]
 rsaEncode txt = rsaEnDec (lbsToIntegerList txt)
@@ -36,10 +37,12 @@ main = do
         txt <- LBS.readFile "test.txt"
         print txt
         LBS.putStrLn txt
+        print txt
         print $ map toInteger $ LBS.unpack txt
         print $ rsaEncode txt (publicKey2 keys) (publicKey1 keys)
         --print $ rsaEncode (rsaEncode txt publicKey n) privateKey n
         print $ rsaEncode txt (privateKey keys) (publicKey1 keys)
+        print $ integerListToLBS $ rsaEncode txt (privateKey keys) (publicKey1 keys)
         --print $ rsaEncode (rsaEncode txt privateKey n) publicKey n
         print keys
         print str
